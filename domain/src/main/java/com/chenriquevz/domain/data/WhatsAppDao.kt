@@ -9,21 +9,21 @@ import kotlinx.coroutines.flow.Flow
 interface WhatsAppDao {
     @Transaction
     @Query("SELECT * FROM WhatsAppContact WHERE phoneNumber IN (:phoneNumber)")
-    fun getWhatsAppEntryWithCategoryAndTimeStamp(phoneNumber: Long): Flow<WhatsAppContactWithCategoryAndTimeStamp>
+    fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: Long): Flow<WhatsAppContactWithCategoryAndTimeStamp>
 
     @Transaction
-    @Query("SELECT * FROM Category WHERE categoryName IN (:category)")
-    fun getCategoriesAndWhatsappEntriesPair(category: String): Flow<CategoryWithWhatsAppContacts>
+    @Query("SELECT * FROM Category")
+    fun getCategoriesWithWhatsAppContact(): Flow<CategoryWithWhatsAppContacts>
 
     @Transaction
     @Query("SELECT * FROM WhatsAppHistory")
-    fun getWhatsAppHistoryWithWhatsappContact(): Flow<List<WhatsAppHistoryWithWhatsappContact>>
+    fun getWhatsAppHistoryWithWhatsappContactAndCategories(): Flow<List<WhatsAppHistoryWithWhatsappContact>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertWhatsAppEntry(whatsAppContact: WhatsAppContact)
+    fun insertWhatsAppContact(whatsAppContact: WhatsAppContact)
 
     @Update
-    fun updateWhatsAppEntryName(whatsAppContact: WhatsAppContact)
+    fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCategory(category: Category)
@@ -31,30 +31,29 @@ interface WhatsAppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWhatsAppHistory(whatsAppHistory: WhatsAppHistory)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWhatsAppEntryCategory(whatsAppEntriesWithCategory: WhatsAppContactWithCategory)
-
     @Delete(entity = Category::class)
     fun deleteCategory(categoryName: CategoryForDelete)
 
     @Delete(entity = WhatsAppContact::class)
-    fun deleteWhatsAppEntry(phoneNumber: WhatsAppContactForDelete)
+    fun deleteWhatsAppContact(phoneNumber: WhatsAppContactForDelete)
 
     @Delete(entity = WhatsAppHistory::class)
     fun deleteWhatsAppHistory(timeStamp: WhatsAppHistoryForDelete)
 
     @Delete(entity = WhatsAppHistory::class)
-    fun deleteWhatsAppHistoryFromAPhoneNumber(phoneNumber: WhatsAppHistoryPhoneNumberForDelete)
+    fun deleteWhatsAppHistoryFromWhatsAppContact(phoneNumber: WhatsAppHistoryPhoneNumberForDelete)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
     @Transaction
-    fun insertWhatsAppEntriesWithCategory(
+    fun insertWhatsAppContactWithCategory(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) {
-        insertWhatsAppEntry(whatsAppContact)
+        insertWhatsAppContact(whatsAppContact)
         categories.forEach { category ->
             insertCategory(category)
-            insertWhatsAppEntryCategory(WhatsAppContactWithCategory(whatsAppContact.phoneNumber, category.categoryName))
+            insertWhatsAppContactWithCategoryCrossReference(WhatsAppContactWithCategory(whatsAppContact.phoneNumber, category.categoryName))
         }
     }
 
