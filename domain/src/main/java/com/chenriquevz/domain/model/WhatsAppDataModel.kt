@@ -1,55 +1,81 @@
 package com.chenriquevz.domain.model
 
 import androidx.room.*
+import androidx.room.ForeignKey.Companion.CASCADE
+
 
 @Entity
-data class WhatsAppEntry(@PrimaryKey val phoneNumber: Int, val name: String)
-
+data class WhatsAppContact(@PrimaryKey val phoneNumber: Long, val name: String? = null)
 @Entity
-data class Categories(@PrimaryKey val categoryName: String)
-
+data class Category(@PrimaryKey val categoryName: String)
 @Entity
-data class WhatsAppHistory(@PrimaryKey val timeStamp: Long, val phoneNumberHistory: Int)
+data class WhatsAppHistory(@PrimaryKey val timeStamp: Long, val phoneNumberHistory: Long)
+
+data class WhatsAppContactForDelete (val phoneNumber: Long)
+data class CategoryForDelete (val categoryName: String)
+data class WhatsAppHistoryForDelete(val timeStamp: Long)
+data class WhatsAppHistoryPhoneNumberForDelete(val phoneNumberHistory: Long)
 
 
-@Entity(primaryKeys = ["phoneNumber", "categoryName"])
-data class WhatsAppEntriesWithCategory(
-    val whatsAppEntry: WhatsAppEntry,
-    val categoryName: Categories
+@Entity(
+    primaryKeys = ["phoneNumber", "categoryName"],
+    /* SUGGESTED */
+    foreignKeys = [ForeignKey(
+        entity = WhatsAppContact::class,
+        parentColumns = ["phoneNumber"],
+        childColumns = ["phoneNumber"],
+        /* SUGGESTED with ForeignKey */
+        onDelete = CASCADE,
+        onUpdate = CASCADE
+    ),
+        ForeignKey(
+            entity = Category::class,
+            parentColumns = ["categoryName"],
+            childColumns = ["categoryName"],
+            /* SUGGESTED with ForeignKey */
+            onDelete = CASCADE,
+            onUpdate = CASCADE
+        )
+    ]
+)
+data class WhatsAppContactWithCategory(
+    val phoneNumber: Long,
+    val categoryName: String
 )
 
-data class WhatsAppEntryWithCategoryAndTimeStamp(
-    @Embedded val whatsAppEntry: WhatsAppEntry,
+data class WhatsAppContactWithCategoryAndTimeStamp(
+    @Embedded val whatsAppContact: WhatsAppContact,
     @Relation(
         parentColumn = "phoneNumber",
         entityColumn = "phoneNumberHistory"
     )
-    val categories: List<WhatsAppHistory>,
+    val timeStamps: List<WhatsAppHistory>,
 
     @Relation(
         parentColumn = "phoneNumber",
         entityColumn = "categoryName",
-        associateBy = Junction(WhatsAppEntriesWithCategory::class)
+        associateBy = Junction(WhatsAppContactWithCategory::class)
     )
-    val timeStamps: List<Categories>
+    val categories: List<Category>
 )
 
 
-data class CategoriesAndWhatsappEntriesPair(
-    @Embedded val category: Categories,
+data class CategoryWithWhatsAppContacts(
+    @Embedded val category: Category,
     @Relation(
         parentColumn = "categoryName",
         entityColumn = "phoneNumber",
-        associateBy = Junction(WhatsAppEntriesWithCategory::class)
+        associateBy = Junction(WhatsAppContactWithCategory::class)
     )
-    val phoneNumbers: List<WhatsAppEntry>
+    val phoneNumbers: List<WhatsAppContact>
 )
 
-data class WhatsAppHistoryWithWhatsappEntryAndCategories(
+data class WhatsAppHistoryWithWhatsappContact(
     @Embedded val whatsAppHistory: WhatsAppHistory,
     @Relation(
+        entity = WhatsAppContact::class,
         parentColumn = "phoneNumberHistory",
         entityColumn = "phoneNumber"
     )
-    val whatsappEntry: WhatsAppEntry
+    val whatsAppContactWithCategoryAndTime: WhatsAppContactWithCategoryAndTimeStamp,
 )

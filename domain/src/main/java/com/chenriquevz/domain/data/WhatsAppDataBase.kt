@@ -6,10 +6,10 @@ import com.chenriquevz.domain.model.*
 
 @Database(
     entities = [
-        WhatsAppEntry::class,
-        Categories::class,
+        WhatsAppContact::class,
+        Category::class,
         WhatsAppHistory::class,
-        WhatsAppEntriesWithCategory::class,
+        WhatsAppContactWithCategory::class,
     ], version = 1
 )
 abstract class WhatsAppDataBase : RoomDatabase() {

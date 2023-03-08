@@ -9,7 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ActivityScoped
 
 @InstallIn(ActivityComponent::class)
 @Module
@@ -21,7 +21,7 @@ class DataBaseModule {
     }
 
     @Provides
-    @Singleton
+    @ActivityScoped
     fun provideDatabase(@ApplicationContext appContext: Context): WhatsAppDataBase {
         return Room.databaseBuilder(
             appContext,
