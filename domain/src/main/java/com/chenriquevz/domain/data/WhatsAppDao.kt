@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 interface WhatsAppDao {
     @Transaction
     @Query("SELECT * FROM WhatsAppContact WHERE phoneNumber IN (:phoneNumber)")
-    fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: Long): Flow<WhatsAppContactWithCategoryAndTimeStamp>
+    fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: String): Flow<WhatsAppContactWithCategoryAndTimeStamp>
 
     @Transaction
     @Query("SELECT * FROM Category")
-    fun getCategoriesWithWhatsAppContact(): Flow<CategoryWithWhatsAppContacts>
+    fun getCategoriesWithWhatsAppContact(): Flow<List<CategoryWithWhatsAppContacts>>
 
     @Transaction
     @Query("SELECT * FROM WhatsAppHistory")
@@ -45,6 +45,8 @@ interface WhatsAppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
+    @Delete()
+    fun deleteWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
     @Transaction
     fun insertWhatsAppContactWithCategory(
         whatsAppContact: WhatsAppContact,
@@ -54,6 +56,16 @@ interface WhatsAppDao {
         categories.forEach { category ->
             insertCategory(category)
             insertWhatsAppContactWithCategoryCrossReference(WhatsAppContactWithCategory(whatsAppContact.phoneNumber, category.categoryName))
+        }
+    }
+
+    @Transaction
+    fun deleteCategoryFromWhatsAppContact(
+        whatsAppContact: WhatsAppContact,
+        categories: List<Category>
+    ) {
+        categories.forEach { category ->
+            deleteWhatsAppContactWithCategoryCrossReference(WhatsAppContactWithCategory(whatsAppContact.phoneNumber, category.categoryName))
         }
     }
 

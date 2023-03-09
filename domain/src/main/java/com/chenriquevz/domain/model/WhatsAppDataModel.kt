@@ -5,16 +5,22 @@ import androidx.room.ForeignKey.Companion.CASCADE
 
 
 @Entity
-data class WhatsAppContact(@PrimaryKey val phoneNumber: Long, val name: String? = null)
+data class WhatsAppContact(@PrimaryKey val phoneNumber: String, val name: String? = null)
 @Entity
-data class Category(@PrimaryKey val categoryName: String)
-@Entity
-data class WhatsAppHistory(@PrimaryKey val timeStamp: Long, val phoneNumberHistory: Long)
+data class Category(@PrimaryKey val categoryName: String) {
 
-data class WhatsAppContactForDelete (val phoneNumber: Long)
+    //TODO make category have an ID (related to a colour(?) and name be optional
+    object DefaultCategories {
+        const val FAVORITE = "FAVORITE"
+    }
+}
+@Entity
+data class WhatsAppHistory(@PrimaryKey val timeStamp: Long, val phoneNumberHistory: String)
+
+data class WhatsAppContactForDelete (val phoneNumber: String)
 data class CategoryForDelete (val categoryName: String)
 data class WhatsAppHistoryForDelete(val timeStamp: Long)
-data class WhatsAppHistoryPhoneNumberForDelete(val phoneNumberHistory: Long)
+data class WhatsAppHistoryPhoneNumberForDelete(val phoneNumberHistory: String)
 
 
 @Entity(
@@ -39,7 +45,7 @@ data class WhatsAppHistoryPhoneNumberForDelete(val phoneNumberHistory: Long)
     ]
 )
 data class WhatsAppContactWithCategory(
-    val phoneNumber: Long,
+    val phoneNumber: String,
     val categoryName: String
 )
 
