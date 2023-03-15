@@ -10,12 +10,12 @@ class WhatsAppHistoryRepository @Inject constructor(private val whatsAppDao: Wha
     fun getWhatsAppHistory(): Flow<List<WhatsAppHistoryWithWhatsappContact>> =
         whatsAppDao.getWhatsAppHistoryWithWhatsappContactAndCategories()
 
-    fun insertWhatsAppHistory(whatsAppHistory: WhatsAppHistory) =
-        whatsAppDao.insertWhatsAppHistory(whatsAppHistory)
+    suspend fun insertWhatsAppHistory(whatsAppContact: WhatsAppContact, whatsAppHistory: WhatsAppHistory) =
+        whatsAppDao.insertWhatsAppHistoryWithContact(whatsAppContact, whatsAppHistory)
 
-    fun deleteWhatsAppHistory(whatsAppHistory: WhatsAppHistory) =
+    suspend fun deleteWhatsAppHistory(whatsAppHistory: WhatsAppHistory) =
         whatsAppDao.deleteWhatsAppHistory(WhatsAppHistoryForDelete(whatsAppHistory.timeStamp))
 
-    fun deleteWhatsAppHistoryFromWhatsAppContact(whatsAppContact: WhatsAppContact) =
+    suspend fun deleteWhatsAppHistoryFromWhatsAppContact(whatsAppContact: WhatsAppContact) =
         whatsAppDao.deleteWhatsAppHistoryFromWhatsAppContact(WhatsAppHistoryPhoneNumberForDelete(whatsAppContact.phoneNumber))
 }

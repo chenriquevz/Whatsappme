@@ -17,13 +17,13 @@ class WhatsAppContactDetailsUseCase @Inject constructor(
     fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: String) =
         whatsAppContactRepository.getWhatsAppContactWithCategoryAndHistory(phoneNumber)
 
-    fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
+    suspend fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
         whatsAppContactRepository.updateWhatsAppContactName(whatsAppContact)
 
-    fun deleteWhatsAppContact(phoneNumber: String) =
+    suspend fun deleteWhatsAppContact(phoneNumber: String) =
         whatsAppContactRepository.deleteWhatsAppContact(phoneNumber)
 
-    fun deleteWhatsAppHistoryFromWhatsAppContact(whatsAppContact: WhatsAppContact) =
+    suspend fun deleteWhatsAppHistoryFromWhatsAppContact(whatsAppContact: WhatsAppContact) =
         historyRepository.deleteWhatsAppHistoryFromWhatsAppContact(whatsAppContact)
 
 

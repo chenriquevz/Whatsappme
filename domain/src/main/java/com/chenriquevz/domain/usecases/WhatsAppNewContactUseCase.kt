@@ -1,25 +1,23 @@
 package com.chenriquevz.domain.usecases
 
-import android.util.Log
 import com.chenriquevz.domain.model.WhatsAppContact
 import com.chenriquevz.domain.model.WhatsAppHistory
 import com.chenriquevz.domain.repository.WhatsAppContactRepository
 import com.chenriquevz.domain.repository.WhatsAppHistoryRepository
-import com.chenriquevz.domain.utils.WhatsAppCalendar
+import com.chenriquevz.domain.utils.TimeHelper
 import javax.inject.Inject
 
 class WhatsAppNewContactUseCase @Inject constructor(
     private val whatsAppContactRepository: WhatsAppContactRepository,
     private val historyRepository: WhatsAppHistoryRepository,
-    private val calendar: WhatsAppCalendar
+    private val calendar: TimeHelper
 ) {
 
-    fun newContact(whatsAppContact: WhatsAppContact)  {
-        whatsAppContactRepository.insertWhatsAppContact(whatsAppContact)
-        historyRepository.insertWhatsAppHistory(WhatsAppHistory(calendar.timeNow(), whatsAppContact.phoneNumber))
+    suspend fun newContact(whatsAppContact: WhatsAppContact) {
+        historyRepository.insertWhatsAppHistory(whatsAppContact, WhatsAppHistory(calendar.timeNow(), whatsAppContact.phoneNumber))
     }
 
-    fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
+    suspend fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
         whatsAppContactRepository.updateWhatsAppContactName(whatsAppContact)
 
 }

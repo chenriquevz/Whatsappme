@@ -16,22 +16,22 @@ class WhatsAppCategoryUseCase @Inject constructor(
     fun getCategoryWithContacts(): Flow<List<CategoryWithWhatsAppContacts>> =
         whatsAppCategoryRepository.getCategoriesWithWhatsAppContact()
 
-    fun addContactCategory(whatsAppContact: WhatsAppContact, categoryList: List<Category>) =
+    suspend fun addContactCategory(whatsAppContact: WhatsAppContact, categoryList: List<Category>) =
         whatsAppContactRepository.insertWhatsAppContactWithCategory(
             whatsAppContact,
             categoryList
         )
 
-    fun removeContactCategory(
+    suspend fun removeCategoryFromContact(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) = whatsAppContactRepository.deleteCategoryFromWhatsAppContact(whatsAppContact, categories)
 
-    fun newCategory(category: Category) {
+    suspend fun newCategory(category: Category) {
         whatsAppCategoryRepository.insertCategory(category)
     }
 
-    fun deleteCategory(category: Category) {
+    suspend fun deleteCategory(category: Category) {
         whatsAppCategoryRepository.deleteCategory(category)
     }
 

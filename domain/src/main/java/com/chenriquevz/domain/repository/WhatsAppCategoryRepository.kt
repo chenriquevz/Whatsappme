@@ -12,8 +12,8 @@ class WhatsAppCategoryRepository @Inject constructor(private val whatsAppDao: Wh
     fun getCategoriesWithWhatsAppContact(): Flow<List<CategoryWithWhatsAppContacts>> =
         whatsAppDao.getCategoriesWithWhatsAppContact()
 
-    fun insertCategory(category: Category) = whatsAppDao.insertCategory(category)
+    suspend fun insertCategory(category: Category) = whatsAppDao.insertCategory(category)
 
-    fun deleteCategory(category: Category) = whatsAppDao.deleteCategory(CategoryForDelete(category.categoryName))
+    suspend fun deleteCategory(category: Category) = whatsAppDao.deleteCategory(CategoryForDelete(category.categoryName))
 
 }

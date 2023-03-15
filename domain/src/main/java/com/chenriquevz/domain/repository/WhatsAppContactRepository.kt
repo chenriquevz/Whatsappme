@@ -10,23 +10,23 @@ import javax.inject.Inject
 
 class WhatsAppContactRepository @Inject constructor(private val whatsAppDao: WhatsAppDao) {
 
-    fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: String): Flow<WhatsAppContactWithCategoryAndTimeStamp> =
+    fun getWhatsAppContactWithCategoryAndHistory(phoneNumber: String) =
         whatsAppDao.getWhatsAppContactWithCategoryAndHistory(phoneNumber)
 
-    fun insertWhatsAppContact(whatsAppContact: WhatsAppContact) =
+    suspend fun insertWhatsAppContact(whatsAppContact: WhatsAppContact) =
         whatsAppDao.insertWhatsAppContact(whatsAppContact)
 
-    fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
+    suspend fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact) =
         whatsAppDao.updateWhatsAppContactName(whatsAppContact)
 
-    fun deleteWhatsAppContact(phoneNumber: String) =
-        whatsAppDao.deleteWhatsAppContact(WhatsAppContactForDelete(phoneNumber))
+    suspend fun deleteWhatsAppContact(phoneNumber: String) =
+        whatsAppDao.deleteWhatsAppContactAndHistory(phoneNumber)
 
-    fun insertWhatsAppContactWithCategory(
+    suspend fun insertWhatsAppContactWithCategory(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) = whatsAppDao.insertWhatsAppContactWithCategory(whatsAppContact, categories)
-    fun deleteCategoryFromWhatsAppContact(
+    suspend fun deleteCategoryFromWhatsAppContact(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) = whatsAppDao.deleteCategoryFromWhatsAppContact(whatsAppContact, categories)

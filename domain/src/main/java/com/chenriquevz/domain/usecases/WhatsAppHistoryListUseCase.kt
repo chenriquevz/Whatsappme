@@ -17,10 +17,10 @@ class WhatsAppHistoryListUseCase @Inject constructor(
     fun getHistoryList(): Flow<List<WhatsAppHistoryWithWhatsappContact>> =
         historyRepository.getWhatsAppHistory()
 
-    fun deleteHistoryEntry(whatsAppHistory: WhatsAppHistory) =
+    suspend fun deleteHistoryEntry(whatsAppHistory: WhatsAppHistory) =
         historyRepository.deleteWhatsAppHistory(whatsAppHistory)
 
-    fun addContactAsFavorite(whatsAppContact: WhatsAppContact) =
+    suspend fun addContactAsFavorite(whatsAppContact: WhatsAppContact) =
         whatsAppContactRepository.insertWhatsAppContactWithCategory(
             whatsAppContact,
             listOf(
@@ -28,7 +28,7 @@ class WhatsAppHistoryListUseCase @Inject constructor(
             )
         )
 
-    fun removeContactAsFavorite(
+    suspend fun removeContactAsFavorite(
         whatsAppContact: WhatsAppContact,
     ) = whatsAppContactRepository.deleteCategoryFromWhatsAppContact(
         whatsAppContact,

@@ -20,35 +20,56 @@ interface WhatsAppDao {
     fun getWhatsAppHistoryWithWhatsappContactAndCategories(): Flow<List<WhatsAppHistoryWithWhatsappContact>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertWhatsAppContact(whatsAppContact: WhatsAppContact)
+    suspend fun insertWhatsAppContact(whatsAppContact: WhatsAppContact)
+
+    //TODO remove
+    @Query("SELECT * FROM WhatsAppContact")
+    fun getWhatsAppContact(): Flow<WhatsAppContact>
 
     @Update
-    fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact)
+    suspend fun updateWhatsAppContactName(whatsAppContact: WhatsAppContact)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertCategory(category: Category)
+    suspend fun insertCategory(category: Category)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWhatsAppHistory(whatsAppHistory: WhatsAppHistory)
+    suspend fun insertWhatsAppHistory(whatsAppHistory: WhatsAppHistory)
 
     @Delete(entity = Category::class)
-    fun deleteCategory(categoryName: CategoryForDelete)
+    suspend fun deleteCategory(categoryName: CategoryForDelete)
 
     @Delete(entity = WhatsAppContact::class)
-    fun deleteWhatsAppContact(phoneNumber: WhatsAppContactForDelete)
+    suspend fun deleteWhatsAppContact(phoneNumber: WhatsAppContactForDelete)
 
     @Delete(entity = WhatsAppHistory::class)
-    fun deleteWhatsAppHistory(timeStamp: WhatsAppHistoryForDelete)
+    suspend fun deleteWhatsAppHistory(timeStamp: WhatsAppHistoryForDelete)
 
     @Delete(entity = WhatsAppHistory::class)
-    fun deleteWhatsAppHistoryFromWhatsAppContact(phoneNumber: WhatsAppHistoryPhoneNumberForDelete)
+    suspend fun deleteWhatsAppHistoryFromWhatsAppContact(phoneNumber: WhatsAppHistoryPhoneNumberForDelete)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
+    suspend fun insertWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
     @Delete()
-    fun deleteWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
+    suspend fun deleteWhatsAppContactWithCategoryCrossReference(whatsAppContactWithCategory: WhatsAppContactWithCategory)
+
+
     @Transaction
-    fun insertWhatsAppContactWithCategory(
+    suspend fun deleteWhatsAppContactAndHistory(phoneNumber: String) {
+        deleteWhatsAppHistoryFromWhatsAppContact(WhatsAppHistoryPhoneNumberForDelete(phoneNumber))
+        deleteWhatsAppContact(WhatsAppContactForDelete(phoneNumber))
+
+    }
+    @Transaction
+    suspend fun insertWhatsAppHistoryWithContact(
+        whatsAppContact: WhatsAppContact,
+        whatsAppHistory: WhatsAppHistory
+    ) {
+        insertWhatsAppContact(whatsAppContact)
+        insertWhatsAppHistory(whatsAppHistory)
+    }
+
+    @Transaction
+    suspend fun insertWhatsAppContactWithCategory(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) {
@@ -60,7 +81,7 @@ interface WhatsAppDao {
     }
 
     @Transaction
-    fun deleteCategoryFromWhatsAppContact(
+    suspend fun deleteCategoryFromWhatsAppContact(
         whatsAppContact: WhatsAppContact,
         categories: List<Category>
     ) {
